@@ -1,21 +1,15 @@
-const mongoose = require("mongoose");
-const Question = require("../modles/Questions")
+const Question = require("../modles/Questions");
+const { pickOne } = require("./questionHelpers");
 
 async function pps(){
-    cqp = []
-    let qp = []
-    let a = await Question.find({subject:'PPS', chapter: "Unit III",})
-    let b = await Question.find({chapter: "Unit IV", subject:'PPS'})
+    const [unitThreeQuestions, unitFourQuestions] = await Promise.all([
+        Question.find({ subject: "PPS", chapter: "Unit III" }).lean(),
+        Question.find({ subject: "PPS", chapter: "Unit IV" }).lean(),
+    ]);
 
-    {let la = a.length;
-    let ja= Math.floor(Math.random() * la );
-    qp.push(a[ja]);}
-
-    {let lb = b.length;
-    let jb= Math.floor(Math.random() * lb );
-    qp.push(b[jb]);}
-
-
-    return(qp) 
+    return [
+        pickOne(unitThreeQuestions, "PPS Unit III"),
+        pickOne(unitFourQuestions, "PPS Unit IV"),
+    ];
 }
- module.exports = pps;
+module.exports = pps;

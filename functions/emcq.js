@@ -1,23 +1,15 @@
-const mongoose = require("mongoose");
-const Question = require("../modles/Questions")
+const Question = require("../modles/Questions");
+const { pickMany } = require("./questionHelpers");
 
 async function emcq(){
-    cqp = [];
-    let qp =[];
-    let MCQ= await Question.find({questionType:'MCQ',subject:'Engineering Chemistry',chapter:'Unit III'});
-    let MCQb= await Question.find({questionType:'MCQ',subject:'Engineering Chemistry',chapter:'Unit IV'});
-    for(let i=0;i<10;i++){
-            let l = MCQ.length;
-            let j= Math.floor(Math.random() * l );
-            qp.push(MCQ[j]);
-            MCQ.splice(j,1);
-        }
-    for(let i=0;i<10;i++){
-            let l = MCQb.length;
-            let j= Math.floor(Math.random() * l );
-            qp.push(MCQb[j]);
-            MCQb.splice(j,1);
-        }
-        return(qp) 
+    const [unitThreeMcq, unitFourMcq] = await Promise.all([
+        Question.find({ questionType: "MCQ", subject: "Engineering Chemistry", chapter: "Unit III" }).lean(),
+        Question.find({ questionType: "MCQ", subject: "Engineering Chemistry", chapter: "Unit IV" }).lean(),
+    ]);
+
+    return [
+        ...pickMany(unitThreeMcq, 10, "Engineering Chemistry Unit III MCQ"),
+        ...pickMany(unitFourMcq, 10, "Engineering Chemistry Unit IV MCQ"),
+    ];
 }
 module.exports = emcq;

@@ -1,29 +1,19 @@
-const mongoose = require("mongoose");
-const Question = require("../modles/Questions")
+const Question = require("../modles/Questions");
+const { pickOne } = require("./questionHelpers");
 
 async function eqp(){
-    cqp = []
-    let qp = []
-    let a = await Question.find({subject:'Engineering Mathematics-II', chapter: "Unit III", category: 1,})
-    let b = await Question.find({chapter: "Unit III", category: 2,subject:'Engineering Mathematics-II'})
-    let c = await Question.find({chapter: "Unit IV", category: 2,subject:'Engineering Mathematics-II'})
-    let d = await Question.find({chapter: "Unit IV", category: 1,subject:'Engineering Mathematics-II'})
-    {let la = a.length;
-    let ja= Math.floor(Math.random() * la );
-    qp.push(a[ja]);}
+    const [unitThreeCatOne, unitThreeCatTwo, unitFourCatTwo, unitFourCatOne] = await Promise.all([
+        Question.find({ subject: "Engineering Mathematics-II", chapter: "Unit III", category: 1 }).lean(),
+        Question.find({ subject: "Engineering Mathematics-II", chapter: "Unit III", category: 2 }).lean(),
+        Question.find({ subject: "Engineering Mathematics-II", chapter: "Unit IV", category: 2 }).lean(),
+        Question.find({ subject: "Engineering Mathematics-II", chapter: "Unit IV", category: 1 }).lean(),
+    ]);
 
-    {let lb = b.length;
-    let jb= Math.floor(Math.random() * lb );
-    qp.push(b[jb]);}
-
-    {let ld = d.length;
-    let jd= Math.floor(Math.random() * ld );
-    qp.push(d[jd]);}
-
-    {let lc = c.length;
-    let jc= Math.floor(Math.random() * lc );
-    qp.push(c[jc]);}
-
-    return(qp) 
+    return [
+        pickOne(unitThreeCatOne, "Engineering Mathematics-II Unit III category 1"),
+        pickOne(unitThreeCatTwo, "Engineering Mathematics-II Unit III category 2"),
+        pickOne(unitFourCatOne, "Engineering Mathematics-II Unit IV category 1"),
+        pickOne(unitFourCatTwo, "Engineering Mathematics-II Unit IV category 2"),
+    ];
 }
- module.exports = eqp;
+module.exports = eqp;

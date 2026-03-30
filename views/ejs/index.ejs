@@ -16,27 +16,26 @@
  alt="logo">
 <h1>EduSpark</h1></div>
 
-<%let i = 0%>
-<%for(let q of question){%>
-    <%if(typeof q === 'string'){i=0%>
+<% let i = 0; %>
+<% for (const q of question) { %>
+    <% if (typeof q === 'string') { i = 0; %>
     <h5><%= q %></h5>
-    <%}else{%>
-        <%if(q.questionType === "MCQ"){i=i+1;%>
+    <% } else if (q && q.questionType === "MCQ") { const options = Array.isArray(q.options) ? q.options : []; i = i + 1; %>
         <h3>(<%=i%>)&nbsp;<%=q.questionText%></h3>
-        <p>(A)&nbsp;<%=q.options[0]%></p>
-        <p>(B)&nbsp;<%=q.options[1]%></p>
-        <p>(C)&nbsp;<%=q.options[2]%></p>
-        <p>(D)&nbsp;<%=q.options[3]%></p><br>
+        <p>(A)&nbsp;<%=options[0] || ""%></p>
+        <p>(B)&nbsp;<%=options[1] || ""%></p>
+        <p>(C)&nbsp;<%=options[2] || ""%></p>
+        <p>(D)&nbsp;<%=options[3] || ""%></p><br>
         
-        <%}else{%>
-           <% if(q.hasImage == "yes"){i=i+1;%>
+    <% } else if (q) { %>
+           <% if(q.hasImage === "yes"){i=i+1;%>
                 <h3>(<%=i%>)&nbsp;<%=q.questionText%></h3>
                 <img class="center" src="<%=q.image%>" alt="question image">  <br> 
             <%}else{%>
                 <%i=i+1;%>
             <h3>(<%=i%>)&nbsp;<%=q.questionText%></h3><br>
             <%}%>
-<%}}}%>
+<% } } %>
 
 </body>
 </html>

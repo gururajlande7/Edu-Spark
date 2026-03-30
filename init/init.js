@@ -1,29 +1,45 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
 const Question = require('../modles/Questions');
 
-const data = JSON.parse(fs.readFileSync('../unit4_apm.json', 'utf-8'));
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
-main().then(()=>{
-    console.log('Connected to MongoDB');
-}).catch((err)=>{
-    console.log(err);
-})
+function loadSeedData() {
+  const dataFile = process.argv[2] || process.env.SEED_FILE;
+
+  if (!dataFile) {
+    throw new Error('Seed file path missing. Pass a JSON file path as an argument or set SEED_FILE.');
+  }
+
+  const resolvedPath = path.resolve(__dirname, dataFile);
+
+  if (!fs.existsSync(resolvedPath)) {
+    throw new Error(`Seed file not found: ${resolvedPath}`);
+  }
+
+  return JSON.parse(fs.readFileSync(resolvedPath, 'utf-8'));
+}
 
 async function main() {
-    await mongoose.disconnect();
-    await mongoose.connect('mongodb://localhost:27017/autopap');
+  if (!process.env.MONGODB_URI) {
+    throw new Error('MONGODB_URI is missing. Add it to your .env file before running the seed script.');
+  }
+
+  const data = loadSeedData();
+  await mongoose.connect(process.env.MONGODB_URI, { dbName: 'autopaper' });
+  await Question.insertMany(data);
+
+  console.log(`${data.length} questions inserted successfully.`);
+  await mongoose.disconnect();
 }
 
-async function enterdata() {
-  try {
-    // await Question.deleteMany({});
-    await Question.insertMany(data); 
-
-    console.log(` ${data.length} questions inserted successfully!`);
-
-  } catch (err) {
-    console.error(err);
-  } 
-}
-enterdata();
+main()
+  .then(() => {
+    console.log('Seed completed.');
+  })
+  .catch((err) => {
+    console.error('Seed failed:', err.message);
+    process.exit(1);
+  });

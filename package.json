@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "seed": "node init/init.js"
+  },
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.3.1",

@@ -2,7 +2,7 @@
 
 <main> 
   <section class="home-form-only">
-    <form class="dropdown-form solo-form" id="programForm" method="post" action="http://localhost:8080/modern">
+    <form class="dropdown-form solo-form" id="programForm" method="post" action="/modern">
       <div class="input-grid centered-grid expanded-grid">
 
         <div class="custom-dropdown-container" data-placeholder="Choose program">
@@ -97,6 +97,9 @@
 
       <div class="form-actions center-actions">
         <button type="submit" class="primary-btn">Start Exploring</button>
+        <% if (typeof errorMessage === "string" && errorMessage.length > 0) { %>
+          <p class="form-message" aria-live="polite"><%= errorMessage %></p>
+        <% } %>
         <p id="formMessage" class="form-message" aria-live="polite"></p>
       </div>
     </form>

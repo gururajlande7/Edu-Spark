@@ -1,25 +1,22 @@
-const mongoose = require("mongoose");
-const Question = require("../modles/Questions")
+const Question = require("../modles/Questions");
+const { pickOne } = require("./questionHelpers");
 
 async function apm(){
-    cqp = []
-    let qp = []
-    let a = await Question.find({subject :"Applied Mechanics", chapter: "Unit III", category: 1,})
-    let b = await Question.find({subject :"Applied Mechanics", chapter: "Unit III", category: 2,})
-    let d = await Question.find({subject :"Applied Mechanics", chapter: "Unit IV", category: 1,})
-    let e = await Question.find({subject :"Applied Mechanics", chapter: "Unit IV", category: 2,})
-    let kc = "a";
-console.log("a:", a.length, "b:", b.length, "d:", d.length, "e:", e.length)
-    let sets = [a, b, d, e];
+    const [unitThreeCatOne, unitThreeCatTwo, unitFourCatOne, unitFourCatTwo] = await Promise.all([
+        Question.find({ subject: "Applied Mechanics", chapter: "Unit III", category: 1 }).lean(),
+        Question.find({ subject: "Applied Mechanics", chapter: "Unit III", category: 2 }).lean(),
+        Question.find({ subject: "Applied Mechanics", chapter: "Unit IV", category: 1 }).lean(),
+        Question.find({ subject: "Applied Mechanics", chapter: "Unit IV", category: 2 }).lean(),
+    ]);
 
-for (let i = 0; i < sets.length; i++) {
-    let l = sets[i].length;
-    let j = Math.floor(Math.random() * l);
-    qp.push(sets[i][j]); // push the actual object from a/b/c/d/e/f
+    return [
+        pickOne(unitThreeCatOne, "Applied Mechanics Unit III category 1"),
+        pickOne(unitThreeCatTwo, "Applied Mechanics Unit III category 2"),
+        pickOne(unitFourCatOne, "Applied Mechanics Unit IV category 1"),
+        pickOne(unitFourCatTwo, "Applied Mechanics Unit IV category 2"),
+    ];
 }
-    return(qp);
-}
-module.exports =apm; 
+module.exports = apm;
 
 
     
